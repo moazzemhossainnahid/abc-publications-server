@@ -44,8 +44,8 @@ const usersSchema = mongoose.Schema({
         // required: true,
         type: String,
         enum: {
-            values: ["admin", "moderator", "user"],
-            message: "{VALUE} is wrong. must be admin/moderator/user"
+            values: ["superadmin", "admin", "user"],
+            message: "{VALUE} is wrong. must be superadmin/admin/user"
         }
     },
     status: {
