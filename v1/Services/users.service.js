@@ -6,7 +6,7 @@ const getUsersService = async (query) => {
     return result;
 };
 const postUsersService = async (data) => {
-    const result = await Users.create(data);
+    const result = await Users.updateOne(data);
     console.log(result);
     return result;
 };

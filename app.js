@@ -11,10 +11,14 @@ app.use(fileUpload());
 app.use(cors());
 app.use(express.json());
 
+
+// import routes
 const usersRoute = require('./v1/Routes/users.route');
 
 
 
+
+// declare routes
 app.use('/api/v1/users', usersRoute);
 
 

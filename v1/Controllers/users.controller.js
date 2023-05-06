@@ -1,24 +1,8 @@
 const express = require("express");
-const { getUsersService,  postUsersService, deleteUsersService,  updateUsersService, } = require("../Services/users.service");
+const Users = require('../Models/users.model');
 
-const getUsersController = async (req, res) => {
-    try {
-        const query = req.query;
-        // console.log(query);
-        const users = await getUsersService(query);
-        console.log(users);
-        if (users.length === 0) {
-            return res.status(200).json({
-                message: "You've no data or entered a wrong queries. please insert first then find data or check your queries",
-            });
-        }
-        return res.status(200).json(users);
-    } catch (error) {
-        res.json(error.message);
-    }
-};
-
-const postUsersController = async (req, res) => {
+// post user by email
+exports.postAnUser = async (req, res) => {
     try {
         const email = req.params.email;
         const user = req.body;
@@ -27,73 +11,94 @@ const postUsersController = async (req, res) => {
         const updateDoc = {
             $set: user
         };
-        const result = await usersCollection.updateOne(filter, updateDoc, options);
-        const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' });
-        res.send({ result, accessToken: token });
-    } catch (error) {
-        res.json(error);
-    }
-};
+        const result = await Users.updateOne(filter, updateDoc, options);
+        const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
+        // res.send({ result, accessToken: token });
 
-const deleteUsersController = async (req, res) => {
-    try {
-        const query = req.query;
-        // console.log(query);
-        const users = await deleteUsersService(query);
-        console.log(users);
-        if (users.acknowledged && !users.deletedCount) {
-            return res.status(404).json({
-                status: "Failed",
-                message: "We didn't find any user to delete.",
-            });
-        }
-        else if (users.acknowledged && users.deletedCount) {
-
-            return res.status(200).json({
-                status: "Successful",
-                message: "Data deleted successfully",
-            });
-        }
-        return res.status(500).json({
-            status: "Failed",
-            message: "Something wrong! please try again or contact with us",
+        res.status(200).json({
+            status: "success",
+            message: "Successfully logged in",
+            data: {
+                user: result,
+                token,
+            },
         });
-    } catch (error) {
-        res.json(error);
+    } catch (err) {
+        res.status(404).json(err);
     }
-};
-const updateUsersController = async (req, res) => {
+}
+
+
+// get all users
+exports.getAllUsers = async (req, res) => {
     try {
-        const query = req.query;
-        const data = req.body;
-        // console.log(query);
-        const users = await updateUsersService(query, data);
-        console.log(users);
-        if (users.acknowledged && !users.matchedCount) {
-            return res.status(404).json({
-                status: "Failed",
-                message: "We didn't find any user to update.",
-            });
-        }
-        else if (users.matchedCount && users.modifiedCount) {
-
-            return res.status(200).json({
-                status: "Successful",
-                message: "Data update successfully",
-            });
-        }
-        return res.status(500).json({
-            status: "Failed",
-            message: "Something wrong! please try again or contact with us",
-        });
-    } catch (error) {
-        res.json(error);
+        const query = {};
+        const cursor = Users.find(query);
+        const users = await cursor.toArray();
+        res.send(users)
+    } catch (err) {
+        res.status(404).json(err);
     }
-};
+}
 
-module.exports = {
-    getUsersController,
-    postUsersController,
-    deleteUsersController,
-    updateUsersController,
-};
+
+// delete an user
+exports.deleteUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await Users.deleteOne(query);
+        res.send(result)
+    } catch (err) {
+        res.status(404).json(err);
+    }
+}
+
+
+// make admin by email
+exports.makeAdmin = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const filter = { email: email };
+        const options = { upsert: true };
+        const updateDoc = {
+            $set: { role: 'admin' }
+        };
+        const result = await Users.updateOne(filter, updateDoc, options);
+        res.send(result);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+}
+
+
+//get admin api 
+exports.getAdmin = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email: email }
+        const adminUser = await Users.findOne(query);
+        const isAdmin = adminUser.role === "admin"
+        res.send({ role: isAdmin })
+    } catch (err) {
+        res.status(404).json(err);
+    }
+}
+
+
+// remove admin by email
+exports.removeAdmin = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const filter = { email: email };
+        const options = { upsert: true };
+        const updateDoc = {
+            $set: { role: '' }
+        };
+        const result = await Users.updateOne(filter, updateDoc, options);
+        res.send(result);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+}
+

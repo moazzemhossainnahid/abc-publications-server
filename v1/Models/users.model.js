@@ -1,65 +1,110 @@
 const mongoose = require("mongoose");
-var validator = require("validator");
+const validator = require("validator");
+const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
-const usersSchema = mongoose.Schema({
-    name: {
-        type: String,
-        // required: [true, "Name is required"],
-    },
-    email: {
-        type: String,
-        required: [true, "Email is required"],
-        unique: [true, "Email must be unique"],
-        validate: [validator.isEmail, "Please provide a valid email"],
-    },
-    img: {
-        
-        type: String,
-        validate: [validator.isURL, "Please provide an URL"],
-    },
-    profession: {
-        // required: true,
-        type: String,
-    },
-    gender: {
-        // required: true,
-        type: String,
-        enum: {
-            values: ["male", "female", "other"],
-            message: "{VALUE} isn't valid. please select 'male', 'female', or 'other' ",
+
+const userSchema = mongoose.Schema(
+    {
+        email: {
+            type: String,
+            validate: [validator.isEmail, "Provide a valid Email"],
+            trim: true,
+            lowercase: true,
+            unique: true,
+            required: [true, "Email address is required"],
         },
-    },
-    phone: {
-        // required: true,
-        type: String,
-        validate: {
-            validator: (value) => {
-                return validator.isMobilePhone(value, ["bn-BD"]);
+        password: {
+            type: String,
+            required: [false, "Password is required"],
+            validate: {
+                validator: (value) =>
+                    validator.isStrongPassword(value, {
+                        minLength: 6,
+                        minLowercase: 3,
+                        minNumbers: 1,
+                        minUppercase: 1,
+                        minSymbols: 1,
+                    }),
+                message: "Password {VALUE} is not strong enough.",
             },
         },
-        maxLength: 14,
-        minLength: 14,
+        role: {
+            type: String,
+            enum: ["superadmin", "admin", "user"],
+            default: "user",
+        },
+
+        name: {
+            type: String,
+            trim: true,
+            minLength: [3, "Name must be at least 3 characters."],
+            maxLength: [100, "Name is too large"],
+        },
+        contactNumber: {
+            type: String,
+            validate: [validator.isMobilePhone, "Please provide a valid contact number"],
+        },
+
+        imageURL: {
+            type: String,
+            validate: [validator.isURL, "Please provide a valid url"],
+        },
+        status: {
+            type: String,
+            default: "active",
+            enum: ["active", "inactive", "blocked"],
+        },
+
+        confirmationToken: String,
+        confirmationTokenExpires: Date,
+
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
     },
-    role: {
-        // required: true,
-        type: String,
-        enum: {
-            values: ["superadmin", "admin", "user"],
-            message: "{VALUE} is wrong. must be superadmin/admin/user"
-        }
-    },
-    status: {
-        // required: true,
-        type: String,
-        enum: {
-            values: ["active", "blocked"],
-            message: "{VALUE} is wrong. must be active/blocked"
-        }
+    {
+        timestamps: true,
     }
-}, {
-    timestamps: true
+
+);
+
+
+
+userSchema.pre("save", function (next) {
+    if (!this.isModified("password")) {
+        //  only run if password is modified, otherwise it will change every time we save the user!
+        return next();
+    }
+    const password = this.password;
+
+    const hashedPassword = bcrypt.hashSync(password);
+
+    this.password = hashedPassword;
+    this.confirmPassword = undefined;
+
+    next();
 });
 
-const Users = mongoose.model("users", usersSchema);
+userSchema.methods.comparePassword = function (password, hash) {
+    const isPasswordValid = bcrypt.compareSync(password, hash);
+    return isPasswordValid;
+};
+
+userSchema.methods.generateConfirmationToken = function () {
+    const token = crypto.randomBytes(32).toString("hex");
+
+    this.confirmationToken = token;
+
+    const date = new Date();
+
+    date.setDate(date.getDate() + 1);
+    this.confirmationTokenExpires = date;
+
+    return token;
+};
+
+
+const Users = mongoose.model("users", userSchema);
 
 module.exports = Users;

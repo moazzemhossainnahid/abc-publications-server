@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+require('dotenv').config();
 
 exports.generateToken = (userInfo) => {
   const payload = {
@@ -8,7 +8,7 @@ exports.generateToken = (userInfo) => {
   };
 
   const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "7days"
+    expiresIn: "7d"
   });
 
   return token;

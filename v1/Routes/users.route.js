@@ -1,17 +1,25 @@
-const express = require('express');
-const { getUsersController, postUsersController, deleteUsersController, updateUsersController } = require('../Controllers/users.controller');
-
+const express = require("express");
+const userController = require("../Controllers/users.controller");
+const verifyToken = require("../Middlewares/verifyToken");
 const router = express.Router();
 
-router.route('/')
-    .get(getUsersController)
-    .delete(deleteUsersController)
-    .patch(updateUsersController)
+// post an user
+router.put("/:email", userController.postAnUser);
 
-    
-router.route('/:email')
-.post(postUsersController)
+// get all Users
+router.get("/", userController.getAllUsers);
 
+// delete an User
+router.delete("/:id", verifyToken, userController.deleteUser);
+
+// get an Admin
+router.get("/isAdmin/:email", verifyToken, userController.getAdmin);
+
+// make an Admin
+router.put("/admin/:email", verifyToken, userController.makeAdmin);
+
+// remove an Admin
+router.put("/admin/remove/:email", verifyToken, userController.removeAdmin);
 
 
 module.exports = router;
