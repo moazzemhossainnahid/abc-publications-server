@@ -8,9 +8,8 @@ require('dotenv').config();
 exports.publishAPost = async (req, res) => {
     try {
         const data = req.body;
-        // console.log(data);
-        const posts = await create(data);
-        console.log(posts);
+        console.log(data);
+        const posts = await Posts.create(data);
         res.status(200).json({
             status: "Successful",
             message: "Data added successfully",
@@ -26,8 +25,8 @@ exports.getSinglePost = async (req, res) => {
     try {
         const id = req.params.id;
         const query = { _id: id }
-        const user = await Posts.findOne(query);
-        return res.status(200).json(user);
+        const post = await Posts.findOne(query);
+        return res.status(200).json(post);
     } catch (err) {
         res.status(404).json(err.message);
     }

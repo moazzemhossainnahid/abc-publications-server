@@ -7,6 +7,8 @@ const postSchema = mongoose.Schema(
         title: {
             type: String,
             trim: true,
+            unique: true,
+            required: [true, "title is required"],
             minLength: [10, "Titile must be at least 3 characters."],
             maxLength: [150, "Titile is too large"],
         },
@@ -14,7 +16,7 @@ const postSchema = mongoose.Schema(
             type: String,
             trim: true,
             minLength: [3, "Category must be at least 3 characters."],
-            maxLength: [10, "Category is too large"],
+            maxLength: [20, "Category is too large"],
         },
         subCategory: {
             type: Array,
@@ -24,25 +26,26 @@ const postSchema = mongoose.Schema(
         },
         description: {
             type: String,
+            required: [true, "Description is required"],
             trim: true,
         },
         authorName: {
             type: String,
             trim: true,
+            required: [true, "authorName is required"],
             minLength: [3, "authorName must be at least 3 characters."],
             maxLength: [100, "authorName is too large"],
         },
         authorEmail: {
             type: String,
-            validate: [validator.isEmail, "Provide a valid Email"],
             trim: true,
-            lowercase: true,
-            unique: true,
-            required: [true, "authorEmail address is required"],
+            required: [true, "authorMail is required"],
+            minLength: [3, "authorMail must be at least 3 characters."],
+            maxLength: [100, "authorMail is too large"],
         },
         status: {
             type: String,
-            default: "upapprove",
+            default: "unapprove",
             enum: ["approve", "unapprove"],
         },
         authorAvatar: {
