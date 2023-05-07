@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema(
             default: "user",
         },
 
-        name: {
+        displayName: {
             type: String,
             trim: true,
             minLength: [3, "Name must be at least 3 characters."],

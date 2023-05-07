@@ -1,11 +1,14 @@
 const express = require("express");
 const Users = require('../Models/users.model');
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 // post user by email
 exports.postAnUser = async (req, res) => {
     try {
         const email = req.params.email;
         const user = req.body;
+        console.log(user);
         const filter = { email: email };
         const options = { upsert: true };
         const updateDoc = {
@@ -14,13 +17,13 @@ exports.postAnUser = async (req, res) => {
         const result = await Users.updateOne(filter, updateDoc, options);
         const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
         // res.send({ result, accessToken: token });
-
+        console.log(token);
         res.status(200).json({
             status: "success",
             message: "Successfully logged in",
             data: {
                 user: result,
-                token,
+                accessToken: token,
             },
         });
     } catch (err) {
@@ -29,16 +32,23 @@ exports.postAnUser = async (req, res) => {
 }
 
 
+// get an user
+exports.getAnUser = async (req, res) => {
+    try {
+        const email = req.params.email;
+        const query = { email: email }
+        const user = await Users.findOne(query);
+        return res.status(200).json(user);
+    } catch (err) {
+        res.status(404).json(err.message);
+    }
+}
+
 // get all users
 exports.getAllUsers = async (req, res) => {
-    try {
-        const query = {};
-        const cursor = Users.find(query);
-        const users = await cursor.toArray();
-        res.send(users)
-    } catch (err) {
-        res.status(404).json(err);
-    }
+    const query = {};
+    const users = await Users.find(query);
+    res.send(users)
 }
 
 
@@ -101,4 +111,5 @@ exports.removeAdmin = async (req, res) => {
         res.status(404).json(err);
     }
 }
+
 

@@ -7,6 +7,9 @@ const router = express.Router();
 router.put("/:email", userController.postAnUser);
 
 // get all Users
+router.get("/:email", userController.getAnUser);
+
+// get all Users
 router.get("/", userController.getAllUsers);
 
 // delete an User
