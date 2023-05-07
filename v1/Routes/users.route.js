@@ -13,16 +13,16 @@ router.get("/:email", userController.getAnUser);
 router.get("/", userController.getAllUsers);
 
 // delete an User
-router.delete("/:id", verifyToken, userController.deleteUser);
+router.delete("/:id", userController.deleteUser);
 
 // get an Admin
-router.get("/isAdmin/:email", verifyToken, userController.getAdmin);
+router.get("/isAdmin/:email", userController.getAdmin);
 
 // make an Admin
-router.put("/admin/:email", verifyToken, userController.makeAdmin);
+router.put("/admin/:email", userController.makeAdmin);
 
 // remove an Admin
-router.put("/admin/remove/:email", verifyToken, userController.removeAdmin);
+router.put("/admin/remove/:email", userController.removeAdmin);
 
 
 module.exports = router;

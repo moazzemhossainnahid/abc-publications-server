@@ -8,7 +8,7 @@ exports.postAnUser = async (req, res) => {
     try {
         const email = req.params.email;
         const user = req.body;
-        console.log(user);
+        // console.log(user);
         const filter = { email: email };
         const options = { upsert: true };
         const updateDoc = {
@@ -17,7 +17,7 @@ exports.postAnUser = async (req, res) => {
         const result = await Users.updateOne(filter, updateDoc, options);
         const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
         // res.send({ result, accessToken: token });
-        console.log(token);
+        // console.log(token);
         res.status(200).json({
             status: "success",
             message: "Successfully logged in",
@@ -56,7 +56,9 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
-        const query = { _id: ObjectId(id) };
+        console.log(id);
+        const query = { _id: id };
+        console.log(query);
         const result = await Users.deleteOne(query);
         res.send(result)
     } catch (err) {
@@ -88,8 +90,10 @@ exports.getAdmin = async (req, res) => {
         const email = req.params.email;
         const query = { email: email }
         const adminUser = await Users.findOne(query);
-        const isAdmin = adminUser.role === "admin"
-        res.send({ role: isAdmin })
+        // console.log(adminUser);
+        const isAdmin = adminUser.role === "admin";
+        const isSPAdmin = adminUser.role === "superadmin"
+        res.send({ role: isAdmin || isSPAdmin })
     } catch (err) {
         res.status(404).json(err);
     }

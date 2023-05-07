@@ -14,12 +14,14 @@ app.use(express.json());
 
 // import routes
 const usersRoute = require('./v1/Routes/users.route');
+const postsRoute = require('./v1/Routes/posts.route');
 
 
 
 
 // declare routes
 app.use('/api/v1/users', usersRoute);
+app.use('/api/v1/posts', postsRoute);
 
 
 
