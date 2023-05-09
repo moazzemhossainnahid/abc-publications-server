@@ -8,11 +8,12 @@ require('dotenv').config();
 exports.publishAPost = async (req, res) => {
     try {
         const data = req.body;
-        console.log(data);
+        // console.log(data);
         const posts = await Posts.create(data);
         res.status(200).json({
             status: "Successful",
             message: "Data added successfully",
+            data:posts
         });
     } catch (error) {
         res.json(error);
@@ -44,9 +45,9 @@ exports.getAllPosts = async (req, res) => {
 exports.deleteAPost = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id);
+        // console.log(id);
         const query = { _id: id };
-        console.log(query);
+        // console.log(query);
         const result = await Posts.deleteOne(query);
         res.send(result)
     } catch (err) {
@@ -59,6 +60,7 @@ exports.deleteAPost = async (req, res) => {
 exports.approveAPost = async (req, res) => {
     try {
         const id = req.params.id;
+        console.log(id);
         const filter = { _id: id };
         const options = { upsert: true };
         const updateDoc = {
