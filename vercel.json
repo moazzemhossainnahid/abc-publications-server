@@ -11,5 +11,10 @@
         "src": "/(.*)",        
         "dest": "server.js"
       }
-    ]
+    ],
+    "build": {
+      "command": "npm run build",
+      "output": "build"
+    }
+  
   }
