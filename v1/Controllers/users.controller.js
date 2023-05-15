@@ -107,7 +107,7 @@ exports.removeAdmin = async (req, res) => {
         const filter = { email: email };
         const options = { upsert: true };
         const updateDoc = {
-            $set: { role: '' }
+            $set: { role: 'user' }
         };
         const result = await Users.updateOne(filter, updateDoc, options);
         res.send(result);
