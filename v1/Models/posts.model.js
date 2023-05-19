@@ -9,19 +9,19 @@ const postSchema = mongoose.Schema(
             trim: true,
             unique: true,
             required: [true, "title is required"],
-            minLength: [10, "Titile must be at least 3 characters."],
+            minLength: [1, "Titile must be at least 3 characters."],
             maxLength: [150, "Titile is too large"],
         },
         category: {
             type: String,
             trim: true,
-            minLength: [3, "Category must be at least 3 characters."],
+            minLength: [1, "Category must be at least 3 characters."],
             maxLength: [20, "Category is too large"],
         },
         subCategory: {
             type: Array,
             trim: true,
-            minLength: [3, "subCategory must be at least 3 characters."],
+            minLength: [1, "subCategory must be at least 3 characters."],
             maxLength: [100, "subCategory is too large"],
         },
         description: {
@@ -33,7 +33,7 @@ const postSchema = mongoose.Schema(
             type: String,
             trim: true,
             required: [true, "authorName is required"],
-            minLength: [3, "authorName must be at least 3 characters."],
+            minLength: [1, "authorName must be at least 3 characters."],
             maxLength: [100, "authorName is too large"],
         },
         authorEmail: {
