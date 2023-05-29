@@ -8,7 +8,7 @@ const postSchema = mongoose.Schema(
             type: String,
             trim: true,
             unique: true,
-            required: [true, "title is required"],
+            required: [false, "title is required"],
             minLength: [1, "Titile must be at least 3 characters."],
             maxLength: [150, "Titile is too large"],
         },
@@ -26,20 +26,20 @@ const postSchema = mongoose.Schema(
         },
         description: {
             type: String,
-            required: [true, "Description is required"],
+            required: [false, "Description is required"],
             trim: true,
         },
         authorName: {
             type: String,
             trim: true,
-            required: [true, "authorName is required"],
+            required: [false, "authorName is required"],
             minLength: [1, "authorName must be at least 3 characters."],
             maxLength: [100, "authorName is too large"],
         },
         authorEmail: {
             type: String,
             trim: true,
-            required: [true, "authorMail is required"],
+            required: [false, "authorMail is required"],
             minLength: [3, "authorMail must be at least 3 characters."],
             maxLength: [100, "authorMail is too large"],
         },
@@ -53,6 +53,10 @@ const postSchema = mongoose.Schema(
             trim: true,
         },
         cover: {
+            type: String,
+            trim: true,
+        },
+        resource: {
             type: String,
             trim: true,
         },

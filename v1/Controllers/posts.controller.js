@@ -7,13 +7,15 @@ require('dotenv').config();
 // publish a post
 exports.publishAPost = async (req, res) => {
     try {
-        const data = req.body;
-        // console.log(data);
-        const posts = await Posts.create(data);
+        const resource = req.file ? req.file.filename : null;
+        const { title, category, subCategory, authorName, authorAvatar, authorEmail, description, createdAt, cover, } = req.body;
+        console.log(req.file);
+        console.log(req.body);
+        const posts = await Posts.create({ title, category, subCategory, authorName, authorAvatar, authorEmail, description, createdAt, cover, resource });
         res.status(200).json({
             status: "Successful",
             message: "Data added successfully",
-            data:posts
+            data: posts
         });
     } catch (error) {
         res.json(error);

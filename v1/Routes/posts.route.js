@@ -1,10 +1,12 @@
 const express = require("express");
 const postController = require("../Controllers/posts.controller");
 const verifyToken = require("../Middlewares/verifyToken");
+const uploader = require("../Middlewares/Uploader");
+const multer  = require('multer')
 const router = express.Router();
 
 // publish a post
-router.post("/", postController.publishAPost);
+router.post("/", uploader.single("resource"), postController.publishAPost);
 
 // get all posts
 router.get("/", postController.getAllPosts);
