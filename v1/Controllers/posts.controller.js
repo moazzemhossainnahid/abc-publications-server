@@ -9,8 +9,8 @@ exports.publishAPost = async (req, res) => {
     try {
         const resource = req.file ? req.file.filename : null;
         const { title, category, subCategory, authorName, authorAvatar, authorEmail, description, createdAt, cover, } = req.body;
-        console.log(req.file);
-        console.log(req.body);
+        // console.log(req.file);
+        // console.log(req.body);
         const posts = await Posts.create({ title, category, subCategory, authorName, authorAvatar, authorEmail, description, createdAt, cover, resource });
         res.status(200).json({
             status: "Successful",

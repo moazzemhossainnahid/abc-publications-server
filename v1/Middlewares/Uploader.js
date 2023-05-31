@@ -19,7 +19,7 @@ const uploader = multer({
         if(supportedImage.test(extension)){
             cb(null, true);
         }else{
-            cb(new Error("Must be a png/jpg/jpeg/webp/svg/pdf Image."))
+            cb(new Error("Must be a pdf File."))
         }
     },
     limits:{
