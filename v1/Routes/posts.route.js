@@ -6,7 +6,7 @@ const multer  = require('multer')
 const router = express.Router();
 
 // publish a post
-router.post("/", uploader.single("resource"), postController.publishAPost);
+router.post("/", postController.publishAPost);
 
 // get all posts
 router.get("/", postController.getAllPosts);
